@@ -8,8 +8,10 @@ import (
 
 var Db *gorm.DB
 
-func init() {
-	Db, err := gorm.Open("mysql", "root:root@tcp(192.168.1.193:3306)/roast?charset=utf8&parseTime=True&loc=Local")
+func InitDb() {
+	var err error
+
+	Db, err = gorm.Open("mysql", "root:root@tcp(192.168.1.193:3306)/roast?charset=utf8&parseTime=True&loc=Local")
 
 	if err != nil {
 		panic("database connetc error: " + err.Error())

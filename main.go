@@ -6,7 +6,8 @@ import (
 )
 
 func main() {
-	defer Db.Close()
+	// defer Db.Close()
+	InitDb()
 
 	routers := routers.InitRouter()
 

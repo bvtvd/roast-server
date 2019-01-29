@@ -13,6 +13,7 @@ func V1(router *gin.Engine) *gin.Engine {
         v1.GET("/cafes", CafesGetCafes)
         v1.POST("/cafes", CafesPostNewCafe)
         v1.GET("/cafes/:id", CafesGetCafe)
+        v1.GET("geocode", Geocode)
     }
 
 	return router

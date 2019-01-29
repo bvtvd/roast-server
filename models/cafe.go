@@ -11,14 +11,14 @@ type Cafe struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	Name      string     `json:"name"`
-	Address   string     `json:"address"`
-	City      string     `json:"city"`
-	State     string     `json:"state"`
-	Zip       string     `json:"zip"`
-	Latitude  float32    `gorm:"type:decimal;precision:11,8"  json:"latitude"`
-	Longitude float32    `gorm:"type:decimal;precision:11,8"  json:"longtitude"`
+	DeletedAt *time.Time `gorm:"default:null" json:"deleted_at"`
+	Name      string     `json:"name" binding:"required,max=50"`
+	Address   string     `json:"address" binding:"required"`
+	City      string     `json:"city" binding:"required"`
+	State     string     `json:"state" binding:"required"`
+	Zip       string     `json:"zip" binding:"required"`
+	Latitude  string    `gorm:"type:varchar(255)"  json:"latitude"`
+	Longitude string    `gorm:"type:varchar(255)"  json:"longtitude"`
 }
 
 // 默认表名有问题, 设置表名
@@ -38,7 +38,7 @@ func GetAllCafes() []Cafe {
 }
 
 // 获取咖啡店详情
-func GetCafe(id int) Cafe {
+func GetCafe(id string) Cafe {
 	var cafe Cafe
 
 	Db.First(&cafe, id)

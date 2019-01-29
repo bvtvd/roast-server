@@ -11,7 +11,7 @@ type Cafe struct {
 	ID        uint       `gorm:"primary_key" json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `gorm:"default:null" json:"deleted_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
 	Name      string     `json:"name" binding:"required,max=50"`
 	Address   string     `json:"address" binding:"required"`
 	City      string     `json:"city" binding:"required"`

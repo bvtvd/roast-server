@@ -12,6 +12,9 @@ func InitRouter() *gin.Engine {
 
 	router := gin.Default()
 
+	// 静态文件服务
+	router.Static("/public", "./public")
+
 	/**
 	* 加载全局中间件
 	*/

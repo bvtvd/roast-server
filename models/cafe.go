@@ -19,6 +19,7 @@ type Cafe struct {
 	Zip       string     `json:"zip" binding:"required"`
 	Latitude  string    `gorm:"type:varchar(255)"  json:"latitude"`
 	Longitude string    `gorm:"type:varchar(255)"  json:"longtitude"`
+	BrewMethods []*BrewMethod `gorm:"many2many:cafes_brew_methods;" json:"brew_methods"`
 }
 
 // 默认表名有问题, 设置表名
@@ -30,7 +31,7 @@ func (Cafe) TableName() string {
 func GetAllCafes() []Cafe {
 	var cafes []Cafe
 
-	Db.Find(&cafes)
+	Db.Preload("BrewMethods").Find(&cafes)
 
 	// fmt.Printf("cafes %v", cafes)
 
@@ -41,7 +42,7 @@ func GetAllCafes() []Cafe {
 func GetCafe(id string) Cafe {
 	var cafe Cafe
 
-	Db.First(&cafe, id)
+	Db.Preload("BrewMethods").First(&cafe, id)
 
 	return cafe
 }

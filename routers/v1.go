@@ -14,6 +14,7 @@ func V1(router *gin.Engine) *gin.Engine {
         v1.POST("/cafes", CafesPostNewCafe)
         v1.GET("/cafes/:id", CafesGetCafe)
         v1.GET("geocode", Geocode)
+        v1.GET("brew-methods", BrewMethodsGetBrewMethods)
     }
 
 	return router

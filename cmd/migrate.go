@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	Db, err := gorm.Open("mysql", "root:root@tcp(192.168.1.193:3306)/roast?charset=utf8&parseTime=True&loc=Local")
+	Db, err := gorm.Open("mysql", "root:root@tcp(192.168.43.245:3306)/roast?charset=utf8&parseTime=True&loc=Local")
 	// defer Db.Close()
 
 	if err != nil {

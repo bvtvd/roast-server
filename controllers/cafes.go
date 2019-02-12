@@ -37,12 +37,12 @@ func CafesGetCafes(c *gin.Context) {
 
 
 type Location struct {
-	Name string 	`form:"name"`
-	Address string `form:"address"`
-	City string `form:"city"`
-	State string  `form:"state"`
-	Zip string  `form:"zip"`
-	MethodsAvaliable []int   `form:"methodsAvaliable"`
+	Name string 	`form:"name" json:"name"`
+	Address string `form:"address" json:"address"`
+	City string `form:"city" json:"city"`
+	State string  `form:"state" json:"state"`
+	Zip string  `form:"zip" json:"zip"`
+	MethodsAvaliable []int   `form:"methodsAvaliable" json:"methodsAvaliable"`
 }
 
 type NewCafe struct {
@@ -83,14 +83,13 @@ func CafesPostNewCafe(c *gin.Context) {
 	// website := c.PostForm("website")
 	// description := c.PostForm("description")
 	// roaster := c.PostForm("roaster")
-	// locations := c.PostFormArray("locations")
+	// locations := c.PostFormArray("locations[]")
 	var new NewCafe
 	c.Bind(&new)
 	// 先绑定数据进行数据验证
 	// var cafes []Cafe
 	fmt.Println("datas==========================================")
 	fmt.Printf("%v \n", new)
-
 }
 
 // 获取咖啡店详情

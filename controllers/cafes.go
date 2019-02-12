@@ -35,23 +35,24 @@ func CafesGetCafes(c *gin.Context) {
 	// c.String(200, "hello")
 }
 
-
+// 定义创建新咖啡店要接收的数据
 type Location struct {
 	Name string 	`form:"name" json:"name"`
 	Address string `form:"address" json:"address"`
 	City string `form:"city" json:"city"`
 	State string  `form:"state" json:"state"`
 	Zip string  `form:"zip" json:"zip"`
-	MethodsAvaliable []int   `form:"methodsAvaliable" json:"methodsAvaliable"`
+	MethodsAvailable []int   `form:"methodsAvailable" json:"methodsAvailable"`
 }
 
 type NewCafe struct {
-	Name string `form:"name"`
-	Website string `form:"website"`
-	Description string `form:"description"`
-	Roaster int `form:"roaster"`
-	Locations []Location `form:"locations"`
+	Name string `form:"name" json:"name"`
+	Website string `form:"website" json:"website"`
+	Description string `form:"description" json:"description"`
+	Roaster int `form:"roaster" json:"roaster"`
+	Locations []Location `form:"locations" json:"locations"`
 }
+
 
 // 创建新的咖啡店
 func CafesPostNewCafe(c *gin.Context) {
@@ -79,17 +80,38 @@ func CafesPostNewCafe(c *gin.Context) {
 
 	// c.JSON(201, cafe)
 
-	// name := c.PostForm("name")
-	// website := c.PostForm("website")
-	// description := c.PostForm("description")
-	// roaster := c.PostForm("roaster")
-	// locations := c.PostFormArray("locations[]")
-	var new NewCafe
-	c.Bind(&new)
+	
+	var createParam NewCafe
+	// c.BindJSON(&new)
+	c.Bind(&createParam)
 	// 先绑定数据进行数据验证
 	// var cafes []Cafe
 	fmt.Println("datas==========================================")
-	fmt.Printf("%v \n", new)
+	fmt.Printf("%v \n", createParam)
+	// 将提交的数据重组
+	var cafes []Cafe
+	for _, v := range createParam.Locations {
+		coordinate, _ := utils.GeocodeAddress(v.Address, v.City, v.State)
+
+		// TODO:: 还有冲泡方法看怎么添加
+
+		cafes = append(cafes, Cafe{
+			Name: createParam.Name, 
+			LocationName: v.Name, 
+			Address: v.Address, 
+			City: v.City, 
+			State: v.State, 
+			Zip: v.Zip,
+			Latitude: coordinate.Lat,
+			Longtitude: coordinate.Lng,
+			Roaster: createParam.Roaster,
+			Website: createParam.Website,
+			Description: createParam.Description,
+			Added_by: 1})
+	}
+
+	fmt.Println("cafes==========================================")
+	fmt.Printf("%v \n", cafes)
 }
 
 // 获取咖啡店详情

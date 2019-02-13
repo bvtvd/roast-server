@@ -21,13 +21,16 @@ type Cafe struct {
 	Description  string `gorm:"type:varchar(255)"  json:"description"`
 	AddedBy   int        `gorm:"type:int;default:0"  json:"added_by"`
 	Latitude  string    `gorm:"type:varchar(255)"  json:"latitude"`
-	Longitude string    `gorm:"type:varchar(255)"  json:"longtitude"`
+	Longitude string    `gorm:"type:varchar(255)"  json:"longitude"`
 	BrewMethods []*BrewMethod `gorm:"many2many:cafes_brew_methods;association_autoupdate:false" json:"brew_methods"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
 	Children  []Cafe `gorm:"foreignkey:ParentId" json:"children"`
 	// Parent Cafe `gorm:"foreignkey:ID;association_foreignkey:ParentId" json:"parent"`
+	Likes []User `gorm:"many2many:users_cafes_likes"`
+	UserLike bool `gorm:"-" json:"user_like"`
+	Tags []Tag `gorm:"many2many:cafes_users_tags;association_jointable_foreignkey:cafe_id;jointable_foreignkey:tag_id;"`
 }
 
 // 默认表名有问题, 设置表名
@@ -50,7 +53,15 @@ func GetAllCafes() []Cafe {
 func GetCafe(id string) Cafe {
 	var cafe Cafe
 
-	Db.Preload("BrewMethods").First(&cafe, id)
+	Db.Preload("BrewMethods").Preload("Tags").First(&cafe, id)
+
+	var likes []UsersCafesLike
+
+	Db.Where("user_id = ? and cafe_id = ?", 2, cafe.ID).Find(&likes)
+
+	if len(likes) > 0 {
+		cafe.UserLike = true
+	}
 
 	return cafe
 }
@@ -58,4 +69,26 @@ func GetCafe(id string) Cafe {
 // 创建新的咖啡店
 func PostNewCafe(cafe *Cafe) {
 	Db.Create(&cafe)
+}
+
+// 喜欢咖啡店
+func PostLikeCafe(id string) bool {
+	var cafe Cafe
+
+	Db.First(&cafe, id)
+
+	Db.Model(&cafe).Association("Likes").Append(User{ID: 2})
+
+	return true
+}
+
+// 取消喜欢咖啡店
+func DeleteLikeCafe(id string) bool {
+	var cafe Cafe
+
+	Db.First(&cafe, id)
+
+	Db.Model(&cafe).Association("Likes").Delete(User{ID: 2})
+
+	return true
 }

@@ -5,10 +5,17 @@ import (
     _ "github.com/jinzhu/gorm/dialects/mysql"
     . "roast-server/models"	// 这里的代码会造成包的循环导入
     "fmt"
+    "github.com/joho/godotenv"
+	"os"
 )
 
 func main() {
-	Db, err := gorm.Open("mysql", "root:root@tcp(192.168.43.245:3306)/roast?charset=utf8&parseTime=True&loc=Local")
+	// 读取配置文件
+	if err := godotenv.Load(".env"); err != nil {
+		panic("config file read error")
+	}
+
+	Db, err := gorm.Open("mysql", os.Getenv("MYSQL"))
 	// defer Db.Close()
 
 	if err != nil {
@@ -25,7 +32,7 @@ func main() {
 
 	//自动迁移模式
 	Db.AutoMigrate(
-		&Cafe{}, &BrewMethod{}, &CafesBrewMethod{},
+		&Cafe{}, &BrewMethod{}, &CafesBrewMethod{}, &UsersCafesLike{}, &User{}, &Tag{}, &CafesUsersTag{},
 	)
 	fmt.Println("migrate finished")
 }

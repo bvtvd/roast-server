@@ -10,7 +10,7 @@ import (
 func main() {
 	// 读取配置文件
 	if err := godotenv.Load(".env"); err != nil {
-		panic("配置文件读取错误")
+		panic("config file read error")
 	}
 
 	// defer Db.Close()

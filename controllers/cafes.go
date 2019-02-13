@@ -150,3 +150,37 @@ func CafesGetCafe(c *gin.Context) {
 	c.JSON(200, cafe)
 }
 
+
+// 喜欢咖啡店
+func CafesPostLikeCafe(c *gin.Context) {
+	id := c.Param("id")
+
+	PostLikeCafe(id)
+
+	c.JSON(201, "success")
+}
+
+// 取消喜欢咖啡店
+func CafesDeleteLikeCafe(c *gin.Context) {
+	id := c.Param("id")
+
+	DeleteLikeCafe(id)
+
+	c.JSON(202, "success")
+}
+
+
+// 添加标签到指定咖啡店
+func CafesPostAddTags(c *gin.Context) {
+	tags := c.QueryArray("tags")
+	cafeId := c.Param("id")
+
+	utils.TagCafe(cafeId, tags, 2)
+
+	c.JSON(201, 'success')
+}
+
+// 删除指定咖啡店上的指定标签
+func CafesDeleteCafeTag(c *gin.Context) {
+
+}

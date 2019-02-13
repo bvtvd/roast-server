@@ -15,6 +15,10 @@ func V1(router *gin.Engine) *gin.Engine {
         v1.GET("/cafes/:id", CafesGetCafe)
         v1.GET("geocode", Geocode)
         v1.GET("brew-methods", BrewMethodsGetBrewMethods)
+        v1.POST("cafes/:id/like", CafesPostLikeCafe)
+        v1.DELETE("cafes/:id/like", CafesDeleteLikeCafe)
+        v1.POST("cafes/:id/tags", CafesPostAddTags)
+        v1.DELETE("cafes/:id/tags/:tagId", CafesDeleteCafeTag)
     }
 
 	return router

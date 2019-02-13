@@ -18,5 +18,5 @@ func main() {
 
 	routers := routers.InitRouter()
 
-	routers.Run(os.Getenv("PORT"))
+	routers.Run(":" + os.Getenv("PORT"))
 }

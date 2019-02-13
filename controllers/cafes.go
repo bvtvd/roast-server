@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	. "roast-server/models"
-	// "roast-server/utils"
+	"roast-server/utils"
 	"fmt"
 	// "strconv"
 	// validator "gopkg.in/go-playground/validator.v9"
@@ -37,20 +37,20 @@ func CafesGetCafes(c *gin.Context) {
 
 // 定义创建新咖啡店要接收的数据
 type Location struct {
-	Name string 	`form:"name" json:"name"`
-	Address string `form:"address" json:"address"`
-	City string `form:"city" json:"city"`
-	State string  `form:"state" json:"state"`
+	Name string 	`form:"name" json:"name" binding:"required"`
+	Address string `form:"address" json:"address" binding:"required"`
+	City string `form:"city" json:"city" binding:"required"`
+	State string  `form:"state" json:"state" binding:"required"`
 	Zip string  `form:"zip" json:"zip"`
-	MethodsAvailable []int   `form:"methodsAvailable" json:"methodsAvailable"`
+	MethodsAvailable []int   `form:"methodsAvailable" json:"methodsAvailable" binding:"required"`
 }
 
 type NewCafe struct {
-	Name string `form:"name" json:"name"`
-	Website string `form:"website" json:"website"`
-	Description string `form:"description" json:"description"`
-	Roaster int `form:"roaster" json:"roaster"`
-	Locations []Location `form:"locations" json:"locations"`
+	Name string `form:"name" json:"name" binding:"required"`
+	Website string `form:"website" json:"website" binding:"required"`
+	Description string `form:"description" json:"description" binding:"required"`
+	Roaster bool `form:"roaster" json:"roaster"`
+	Locations []Location `form:"locations" json:"locations" binding:"dive"`
 }
 
 
@@ -83,17 +83,32 @@ func CafesPostNewCafe(c *gin.Context) {
 	
 	var createParam NewCafe
 	// c.BindJSON(&new)
-	c.Bind(&createParam)
+	// c.ShouldBind(&createParam)
+	if err := c.ShouldBind(&createParam); err != nil {
+		c.JSON(422, err.Error())
+		return
+	}
 	// 先绑定数据进行数据验证
 	// var cafes []Cafe
 	fmt.Println("datas==========================================")
 	fmt.Printf("%v \n", createParam)
 	// 将提交的数据重组
 	var cafes []Cafe
+	var brewMethods []*BrewMethod
 	for _, v := range createParam.Locations {
 		coordinate, _ := utils.GeocodeAddress(v.Address, v.City, v.State)
+		brewMethods = make([]*BrewMethod, 0)
 
-		// TODO:: 还有冲泡方法看怎么添加
+		for _, m := range v.MethodsAvailable {
+			brewMethods = append(brewMethods, &BrewMethod{ID: uint(m)})
+		}
+
+		var r int 
+		if createParam.Roaster {
+			r = 1
+		}else{
+			r = 0
+		}
 
 		cafes = append(cafes, Cafe{
 			Name: createParam.Name, 
@@ -103,15 +118,27 @@ func CafesPostNewCafe(c *gin.Context) {
 			State: v.State, 
 			Zip: v.Zip,
 			Latitude: coordinate.Lat,
-			Longtitude: coordinate.Lng,
-			Roaster: createParam.Roaster,
+			Longitude: coordinate.Lng,
+			Roaster: r,
 			Website: createParam.Website,
 			Description: createParam.Description,
-			Added_by: 1})
+			AddedBy: 1,
+			BrewMethods: brewMethods})
 	}
 
 	fmt.Println("cafes==========================================")
 	fmt.Printf("%v \n", cafes)
+
+	// 数据入库
+	// var parent Cafe
+	for k, _ := range cafes {
+		if k > 0 {
+			cafes[k].ParentId = cafes[0].ID
+		}
+		PostNewCafe(&cafes[k])
+	}
+
+	c.JSON(201, gin.H{"data": cafes})
 }
 
 // 获取咖啡店详情

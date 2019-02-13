@@ -5,6 +5,7 @@ import (
 	. "roast-server/models"
 	"roast-server/utils"
 	"fmt"
+	"strconv"
 	// "strconv"
 	// validator "gopkg.in/go-playground/validator.v9"
 )
@@ -43,6 +44,7 @@ type Location struct {
 	State string  `form:"state" json:"state" binding:"required"`
 	Zip string  `form:"zip" json:"zip"`
 	MethodsAvailable []int   `form:"methodsAvailable" json:"methodsAvailable" binding:"required"`
+	Tags []string `form:"tags" json:"tags"`
 }
 
 type NewCafe struct {
@@ -135,7 +137,11 @@ func CafesPostNewCafe(c *gin.Context) {
 		if k > 0 {
 			cafes[k].ParentId = cafes[0].ID
 		}
+
 		PostNewCafe(&cafes[k])
+
+		
+		utils.TagCafe(uint(cafes[k].ID), createParam.Locations[k].Tags, 2)
 	}
 
 	c.JSON(201, gin.H{"data": cafes})
@@ -173,14 +179,19 @@ func CafesDeleteLikeCafe(c *gin.Context) {
 // 添加标签到指定咖啡店
 func CafesPostAddTags(c *gin.Context) {
 	tags := c.QueryArray("tags")
-	cafeId := c.Param("id")
+	cafeId, _ := strconv.Atoi(c.Param("id"))
 
-	utils.TagCafe(cafeId, tags, 2)
+	utils.TagCafe(uint(cafeId), tags, 2)
 
-	c.JSON(201, 'success')
+	c.JSON(201, "success")
 }
 
 // 删除指定咖啡店上的指定标签
 func CafesDeleteCafeTag(c *gin.Context) {
+	cafeId,_ := strconv.Atoi(c.Param("id"))
+	tagId,_ := strconv.Atoi(c.Param("tagId"))
 
+	DeleteCafeTag(uint(cafeId), uint(tagId), 2)
+
+	c.JSON(202, "accepted")
 }

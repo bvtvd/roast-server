@@ -19,6 +19,7 @@ func V1(router *gin.Engine) *gin.Engine {
         v1.DELETE("cafes/:id/like", CafesDeleteLikeCafe)
         v1.POST("cafes/:id/tags", CafesPostAddTags)
         v1.DELETE("cafes/:id/tags/:tagId", CafesDeleteCafeTag)
+        v1.GET("tags", TagsGetTags)
     }
 
 	return router

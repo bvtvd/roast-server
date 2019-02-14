@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	// "fmt"
 	. "roast-server/database"
 )
 
@@ -18,8 +18,7 @@ func GetTags(name string) []Tag {
 	query := Db
 
 	if name != "" {
-		t, _ := fmt.Printf("%%s%", name)
-		query = query.Where("name like ?", t)
+		query = query.Where("name like ?", "%" + name + "%")
 	}
 
 	query.Find(&tags)

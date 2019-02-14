@@ -28,9 +28,9 @@ type Cafe struct {
 	DeletedAt *time.Time `json:"deleted_at"`
 	Children  []Cafe `gorm:"foreignkey:ParentId" json:"children"`
 	// Parent Cafe `gorm:"foreignkey:ID;association_foreignkey:ParentId" json:"parent"`
-	Likes []User `gorm:"many2many:users_cafes_likes"`
+	Likes []User `gorm:"many2many:users_cafes_likes" json:"likes"`
 	UserLike bool `gorm:"-" json:"user_like"`
-	Tags []Tag `gorm:"many2many:cafes_users_tags;association_jointable_foreignkey:cafe_id;jointable_foreignkey:tag_id;"`
+	Tags []Tag `gorm:"many2many:cafes_users_tags;association_jointable_foreignkey:tag_id;jointable_foreignkey:cafe_id;" json:"tags"`
 }
 
 // 默认表名有问题, 设置表名
@@ -42,7 +42,7 @@ func (Cafe) TableName() string {
 func GetAllCafes() []Cafe {
 	var cafes []Cafe
 
-	Db.Preload("BrewMethods").Find(&cafes)
+	Db.Preload("BrewMethods").Preload("Tags").Find(&cafes)
 
 	// fmt.Printf("cafes %v", cafes)
 

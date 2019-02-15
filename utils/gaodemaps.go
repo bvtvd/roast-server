@@ -72,7 +72,7 @@ func GeocodeAddress(address string, city string, state string) (Coordinate, erro
 		locationArr := strings.Split(string(location), ",")
 		fmt.Printf("[LOCATION Arr]: %v \n", locationArr)
 		
-		coordinate = Coordinate{locationArr[0], locationArr[1]}
+		coordinate = Coordinate{locationArr[1], locationArr[0]}
 	}
 	
 	return coordinate, nil

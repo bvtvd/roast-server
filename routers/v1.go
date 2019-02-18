@@ -19,14 +19,16 @@ func V1(router *gin.Engine) *gin.Engine {
         v1.GET("brew-methods", BrewMethodsGetBrewMethods)
         v1.GET("tags", TagsGetTags)
 
-
+        v1Auth := v1.Group("/")
         //认证接口
-        v1.use(jwt.JWTAuth()){
-            v1.POST("/cafes", CafesPostNewCafe)
-            v1.POST("cafes/:id/like", CafesPostLikeCafe)
-            v1.DELETE("cafes/:id/like", CafesDeleteLikeCafe)
-            v1.POST("cafes/:id/tags", CafesPostAddTags)
-            v1.DELETE("cafes/:id/tags/:tagId", CafesDeleteCafeTag)
+        v1Auth.Use(jwt.JWTAuth())
+        {
+            v1Auth.POST("/cafes", CafesPostNewCafe)
+            v1Auth.POST("cafes/:id/like", CafesPostLikeCafe)
+            v1Auth.DELETE("cafes/:id/like", CafesDeleteLikeCafe)
+            v1Auth.POST("cafes/:id/tags", CafesPostAddTags)
+            v1Auth.DELETE("cafes/:id/tags/:tagId", CafesDeleteCafeTag)
+            v1Auth.GET("user", UsersGetUser)
         }
     }
 

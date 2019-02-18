@@ -27,3 +27,12 @@ func GetUserFromCredentials(user User) (User, error) {
 
 	return user, nil
 }
+
+// 根据id获取用户信息
+func GetUserById(id int) User {
+	var user User
+
+	Db.First(&user, id)
+
+	return user
+}

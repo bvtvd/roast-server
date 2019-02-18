@@ -1,4 +1,4 @@
-package middlewares
+package jwt
 
 import (
 	"errors"
@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	// "fmt"
+	. "roast-server/models"
 )
 
 
@@ -19,6 +21,7 @@ func JWTAuth() gin.HandlerFunc {
 				token = s[1]
 			}
 		}
+		SetSignKey("secret")
 		j := NewJWT()
 		claims, err := j.ParseToken(token)
 		if err != nil {
@@ -33,6 +36,8 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 		c.Set("claims", claims)
+		user := GetUserById(claims.ID)
+		c.Set("user", user)
 	}
 }
 
@@ -76,6 +81,7 @@ func SetSignKey(key string) string {
 func (j *JWT) CreateToken(claims CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
+	// return token.SignedString([]byte("test"))
 }
 
 

@@ -13,15 +13,19 @@ import (
 	// "time"
 )
 
-func AuthLogin(c *gin.Context) {
-	username := c.PostForm("username")
-	password := c.PostForm("password")
+type Credentials struct {
+	Username string	 `form:"username" json:"username"`
+	Password string  `form:"password" json:"password"`
+}
 
-	fmt.Printf("username: %s\n", username)
-	fmt.Printf("password: %s\n", password)
-	user, err := GetUserFromCredentials(User{Username: username, Password: password})
+func AuthLogin(c *gin.Context) {
+	var credentials Credentials
+	c.ShouldBindJSON(&credentials)
+
+	fmt.Printf("credentials: %v\n", credentials)
+	user, err := GetUserFromCredentials(User{Username: credentials.Username, Password: credentials.Password})
 	if err != nil {
-		c.JSON(200, gin.H{"msg": "用户名或密码错误"})
+		c.JSON(400, gin.H{"msg": "用户名或密码错误"})
 	} else {
 
 		// 用户验证成功, 准备token 然后返回
@@ -41,7 +45,7 @@ func AuthLogin(c *gin.Context) {
 		token, err := j.CreateToken(claims)
 		fmt.Printf("token: %s\n", token)
 		if err != nil {
-			c.JSON(204, err.Error())
+			c.JSON(400, err.Error())
 		}
 		
 		c.JSON(http.StatusOK, gin.H{"token": token})

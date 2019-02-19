@@ -17,4 +17,4 @@ func UsersGetUser(c *gin.Context) {
 	 // fmt.Println(claims.ID)
 	 fmt.Printf("user: %v", user)
 	 c.JSON(http.StatusOK, user)
- }
+}
